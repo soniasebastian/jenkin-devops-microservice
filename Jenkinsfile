@@ -7,6 +7,12 @@ pipeline {
 	// agent any
 	// agent { docker { image 'maven:3.6.3' } }
 	agent { docker { image 'node:13.8' } }
+
+
+    environment {
+        DOCKER_HOST = "unix:///var/run/docker.sock"
+    } 
+	
 	stages {
 		stage ('Build') {
 			steps {
