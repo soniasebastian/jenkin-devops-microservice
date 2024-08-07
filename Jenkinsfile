@@ -1,12 +1,10 @@
-// scripted
+//SCRIPTED
 
-
-// Declarative
-
+//DECLARATIVE
 pipeline {
-	 agent any
-	// agent { docker { image 'maven:3.6.3' } }
-	// agent { docker { image 'node:13.8' } }
+	agent any
+	// agent { docker { image 'maven:3.6.3'} }
+	// agent { docker { image 'node:13.8'} }
 	environment {
 		dockerHome = tool 'myDocker'
 		mavenHome = tool 'myMaven'
@@ -14,65 +12,65 @@ pipeline {
 	}
 
 	stages {
-		stage ('Checkout') {
+		stage('Checkout') {
 			steps {
 				sh 'mvn --version'
-				sh 'docker --version'
+				sh 'docker version'
 				echo "Build"
 				echo "PATH - $PATH"
 				echo "BUILD_NUMBER - $env.BUILD_NUMBER"
 				echo "BUILD_ID - $env.BUILD_ID"
 				echo "JOB_NAME - $env.JOB_NAME"
 				echo "BUILD_TAG - $env.BUILD_TAG"
-				echo "Build_URL - $env.BUILD_URL"
+				echo "BUILD_URL - $env.BUILD_URL"
 			}
 		}
-		stage ('Compile') {
+		stage('Compile') {
 			steps {
 				sh "mvn clean compile"
 			}
 		}
 
-		stage ('Test') {
+		stage('Test') {
 			steps {
-				sh "mvn test"					
-			}	
-		}
-
-		stage ('Integration Test') {
-			steps {
-				sh "mvn failsafe:integration-test failsafe:verify"
-			}	
-		}
-
-		stage ('Package') {
-			steps {
-				sh "mvn package -DskipTests"
-			}	
-		}
-
-		stage ('Build Docker Image') {
-			steps {
-				//"docker build -t soniasebastian/currency-exchange-devops:$env.BUILS_TAG"
-				script {
-					dockerImage = docker.build ("soniasebastian/currency-exchange-devops:${env.BUILD_TAG}")
-				}
+				sh "mvn test"
 			}
 		}
 
-		stage ('Push Docker Image') {
+		stage('Integration Test') {
+			steps {
+				sh "mvn failsafe:integration-test failsafe:verify"
+			}
+		}
+
+		stage('Package') {
+			steps {
+				sh "mvn package -DskipTests"
+			}
+		}
+
+		stage('Build Docker Image') {
+			steps {
+				//"docker build -t in28min/currency-exchange-devops:$env.BUILD_TAG"
+				script {
+					dockerImage = docker.build("in28min/currency-exchange-devops:${env.BUILD_TAG}")
+				}
+
+			}
+		}
+
+		stage('Push Docker Image') {
 			steps {
 				script {
-					docker.withRegistry('','dockerhub') {
-					dockerImage.push();
-					dockerImage.push('latest');
+					docker.withRegistry('', 'dockerhub') {
+						dockerImage.push();
+						dockerImage.push('latest');
 					}
 				}
-				
 			}
 		}
 	} 
-
+	
 	post {
 		always {
 			echo 'Im awesome. I run always'
@@ -83,6 +81,5 @@ pipeline {
 		failure {
 			echo 'I run when you fail'
 		}
-	} 
+	}
 }
-		
