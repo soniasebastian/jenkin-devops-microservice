@@ -1,10 +1,13 @@
 pipeline {
     agent any
+    // agent { docker { image 'maven:3.6.3'} }
+    // agent { docker { image 'node:13.8'} }
     environment {
         dockerHome = tool name: 'myDocker', type: 'org.jenkinsci.plugins.docker.commons.tools.DockerTool'
         mavenHome = tool name: 'myMaven', type: 'hudson.tasks.Maven$MavenInstallation'
         PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
     }
+
     stages {
         stage('Clean Workspace') {
             steps {
@@ -29,21 +32,25 @@ pipeline {
                 sh "mvn clean compile"
             }
         }
-        stage('Test') {
+
+        stage('Unit Test') {
             steps {
                 sh "mvn test"
             }
         }
+
         stage('Integration Test') {
             steps {
                 sh "mvn failsafe:integration-test failsafe:verify"
             }
         }
+
         stage('Package') {
             steps {
                 sh "mvn package -DskipTests"
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -51,6 +58,7 @@ pipeline {
                 }
             }
         }
+
         stage('Push Docker Image') {
             steps {
                 script {
@@ -61,18 +69,8 @@ pipeline {
                 }
             }
         }
-		stage('Test') {
-    		steps {
-   	    		sh "mvn test -X"
-    			}
-			}
-		stage('Integration Test') {
-    		steps {
-        		sh "mvn failsafe:integration-test failsafe:verify -X"
-    		}
-		}		
-
     }
+
     post {
         always {
             echo 'Im awesome. I run always'
