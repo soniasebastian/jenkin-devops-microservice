@@ -6,6 +6,11 @@ pipeline {
         PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
     }
     stages {
+        stage('Clean Workspace') {
+            steps {
+                deleteDir()
+            }
+        }
         stage('Checkout') {
             steps {
                 sh 'mvn --version'
@@ -56,6 +61,17 @@ pipeline {
                 }
             }
         }
+		stage('Test') {
+    		steps {
+   	    		sh "mvn test -X"
+    			}
+			}
+		stage('Integration Test') {
+    		steps {
+        		sh "mvn failsafe:integration-test failsafe:verify -X"
+    		}
+		}		
+
     }
     post {
         always {
