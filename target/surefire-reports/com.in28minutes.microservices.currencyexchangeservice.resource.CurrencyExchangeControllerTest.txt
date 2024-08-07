@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.in28minutes.microservices.currencyexchangeservice.resource.CurrencyExchangeControllerTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.875 s - in com.in28minutes.microservices.currencyexchangeservice.resource.CurrencyExchangeControllerTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.06 s - in com.in28minutes.microservices.currencyexchangeservice.resource.CurrencyExchangeControllerTest
